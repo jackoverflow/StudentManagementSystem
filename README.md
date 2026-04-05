@@ -56,13 +56,34 @@ StudentSystemApp/
    dotnet build -c Release
    ```
 
-3. **Run (pick target):**
-   ```bash
-   # Windows
-   dotnet run --framework net9.0-windows10.0.19041.0
+3. **Run Targets:**
 
-   # Android emulator (requires Android workload)
+   **Windows Desktop App (Blazor Hybrid):**
+   ```bash
+   dotnet run --framework net9.0-windows10.0.19041.0
+   ```
+   *Opens native Windows app with embedded Blazor WebView*
+
+   **Android Emulator:**
+   ```bash
    dotnet run --framework net9.0-android
+   ```
+   *Requires Android SDK/emulator + `dotnet workload install maui-android`*
+
+   **Pure Blazor Web (Standalone WebAssembly):**
+   1. Create `wwwroot/appsettings.json`:
+      ```
+      {"ConnectionStrings":{"DefaultConnection":"Data Source=students-web.db"}}
+      ```
+   2. Run:
+      ```bash
+      dotnet publish -c Release -r win-x64 --self-contained false -p:PublishProfile=FolderProfile /p:PublishDir=publish-web
+      ```
+   3. Open `publish-web/wwwroot/index.html` in browser.
+
+   **Full clean build:**
+   ```bash
+   dotnet clean && dotnet restore && dotnet build && dotnet run --framework net9.0-windows10.0.19041.0
    ```
 
 4. **Navigation:**
