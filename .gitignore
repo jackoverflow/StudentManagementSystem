@@ -1,0 +1,61 @@
+## [Bb]in/ and [Oo]bj/ folders
+[Bb]in/
+[Oo]bj/
+
+## Visual Studio temporary files, caches, and settings
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.clw
+*.cache
+*.ncb
+*.sdf
+*.opensdf
+*.v12.suo
+*.v11.suo
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+## Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+## JetBrains (Rider)
+.idea/
+*.sln.iml
+
+## .NET / MAUI specific
+project.lock.json
+project.fragment.lock.json
+artifacts/
+AppPackages/
+BundleArtifacts/
+
+## Publishing output
+*.Publish.xml
+*.pubxml
+*.pubxml.user
+
+## Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+## macOS
+.DS_Store
+*.swp
+*.swo
+
+## Linux
+*~
+
+## User-specific files
+*.pfx
+*.publishsettings
