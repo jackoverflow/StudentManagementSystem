@@ -1,0 +1,52 @@
+@page "/"
+@using StudentSystemApp.Models
+
+<PageTitle>Students</PageTitle>
+
+<h1>Student Information System</h1>
+
+<h3>Student List</h3>
+
+@if (students == null)
+{
+    <p><em>Loading students...</em></p>
+}
+else if (!students.Any())
+{
+    <p>No students found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Student Number</th>
+                <th>Full Name</th>
+                <th>Course</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in students)
+            {
+                <tr>
+                    <td>@student.Id</td>
+                    <td>@student.StudentNumber</td>
+                    <td>@student.FullName</td>
+                    <td>@student.Course</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Student> students = new();
+
+    protected override void OnInitialized()
+    {
+        // Initializing with some dummy data for demonstration
+        students.Add(new Student { Id = "1", StudentNumber = "2024-001", FullName = "Alice Johnson", Course = "Computer Science" });
+        students.Add(new Student { Id = "2", StudentNumber = "2024-002", FullName = "Bob Smith", Course = "Information Technology" });
+    }
+}
