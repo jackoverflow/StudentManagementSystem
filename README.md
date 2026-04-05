@@ -10,10 +10,19 @@ A cross-platform .NET MAUI Blazor Hybrid app for managing student information us
 - Microsoft.Data.Sqlite
 
 ## Features
-- Cross-platform student list display
-- SQLite database with sample data (4 students)
-- Responsive UI with Bootstrap CSS
-- Blazor routing and navigation
+- Cross-platform student list (`/students`) with SQLite data
+- **CREATE new student** (`/students/create`) with validation + Dapper INSERT
+- Responsive Bootstrap UI
+- Blazor routing + EditForm/DataAnnotations
+
+## CRUD Implementation Notes
+**Dapper INSERT SQL:**
+```sql
+INSERT INTO Students (StudentNumber, FullName, Course) 
+VALUES (@StudentNumber, @FullName, @Course);
+SELECT last_insert_rowid();
+```
+**Flow:** EditForm → Validation → Repo.CreateAsync() → Redirect to list
 
 ## Project Structure
 ```
