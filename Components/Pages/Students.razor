@@ -1,5 +1,7 @@
 @page "/"
 @using StudentSystemApp.Models
+@using StudentSystemApp.Services
+@inject StudentRepository StudentRepo
 
 <PageTitle>Students</PageTitle>
 
@@ -43,12 +45,12 @@
 </div>
 
 @code {
-    private List<Student> students = new();
+    private List<Student>? students;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // Initializing with some dummy data for demonstration
-        students.Add(new Student { Id = "1", StudentNumber = "2024-001", FullName = "Alice Johnson", Course = "Computer Science" });
-        students.Add(new Student { Id = "2", StudentNumber = "2024-002", FullName = "Bob Smith", Course = "Information Technology" });
+        // Fetching real data from the SQLite database
+        var result = await StudentRepo.GetAllAsync();
+        students = result.ToList();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿﻿using Microsoft.Extensions.Logging;
+using StudentSystemApp.Services;
 
 namespace StudentSystemApp;
 
@@ -13,6 +14,10 @@ public static class MauiProgram
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 			});
+
+        // Initialize the SQLite database
+        DbInitializer.Initialize();
+        builder.Services.AddSingleton<StudentRepository>();
 
 		builder.Services.AddMauiBlazorWebView();
 
