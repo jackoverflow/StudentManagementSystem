@@ -14,9 +14,6 @@ public class Student
     [StringLength(100, ErrorMessage = "Max 100 chars")]
     public string FullName { get; set; } = string.Empty;
     
-    // This is now a display-only property populated by the JOIN
-    public string? Course { get; set; }
-
-    [Range(1, int.MaxValue, ErrorMessage = "Please select a valid course")]
-    public int CourseId { get; set; }
+    [Required(ErrorMessage = "Course is required")]
+    public string Course { get; set; } = string.Empty;
 }

@@ -2,9 +2,7 @@
 @using StudentSystemApp.Models
 @using StudentSystemApp.Services
 @inject StudentRepository StudentRepo
-@inject CourseRepository CourseRepo
 @inject NavigationManager Navigation
-@implements IDisposable
 
 <PageTitle>Create Student</PageTitle>
 
@@ -29,14 +27,8 @@
 
         <div class="mb-3">
             <label>Course</label>
-            <InputSelect @bind-Value="student.CourseId" class="form-control">
-                <option value="0">-- Select Course --</option>
-                @foreach (var course in courses)
-                {
-                    <option value="@course.CourseId">@course.CourseDescription</option>
-                }
-            </InputSelect>
-            <ValidationMessage For="@(() => student.CourseId)" />
+            <InputText @bind-Value="student.Course" class="form-control" placeholder="Computer Science" />
+            <ValidationMessage For="@(() => student.Course)" />
         </div>
 
         <button type="submit" class="btn btn-success me-2 create-btn" disabled="@isLoading">Create Student</button>
@@ -46,13 +38,7 @@
 
 @code {
     private Student student = new() { Id = Guid.NewGuid().ToString() };
-    private List<Course> courses = new();
     private bool isLoading = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        courses = await CourseRepo.GetAllAsync();
-    }
 
     private async Task HandleValidSubmit()
     {
@@ -72,6 +58,4 @@
     {
         Navigation.NavigateTo("/students");
     }
-
-    public void Dispose() { }
 }
