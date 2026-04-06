@@ -43,7 +43,7 @@
                         <td>@student.FullName</td>
                         <td>@student.Course</td>
                         <td>
-                            <NavLink href="/students/edit/@student.Id" class="btn btn-warning btn-sm me-1">
+                            <NavLink href="@($"/students/edit/{student.Id}")" class="btn btn-warning btn-sm me-1">
                                 <i class="bi bi-pencil"></i> Edit
                             </NavLink>
                             <button class="btn btn-danger btn-sm" @onclick="() => DeleteStudent(student.Id)" disabled="@isDeleting">
