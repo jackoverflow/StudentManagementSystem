@@ -86,7 +86,15 @@ Because .NET MAUI is cross-platform, we cannot use hardcoded file paths (like `C
 ## 9. Repository Pattern (`StudentRepository.cs`)
 To manage our data operations cleanly, we implemented the Repository pattern.
 *   **Abstraction**: The UI components don't write SQL; they call methods on the repository.
-*   **Dapper Integration**: We use `QueryAsync` for reading and `ExecuteAsync` for writing (Create/Update/Delete).
+*   **Dapper Integration**: We use `QueryAsync` for reading and `ExecuteAsync` for writing.
+*   **Relational Joins**: In the `GetAllAsync` method, we use a `LEFT JOIN` to fetch the `CourseDescription` from the `Courses` table and map it to the `Course` property in our `Student` model. This is significantly more efficient than running separate queries for each student.
+
+```sql
+SELECT s.*, c.CourseDescription as Course 
+FROM Students s 
+LEFT JOIN Courses c ON s.CourseId = c.CourseId
+```
+
 *   **Async/Await**: All database calls are asynchronous to prevent blocking the native UI thread.
 
 ## 10. Service Registration (`MauiProgram.cs`)
