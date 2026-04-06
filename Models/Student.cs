@@ -14,6 +14,9 @@ public class Student
     [StringLength(100, ErrorMessage = "Max 100 chars")]
     public string FullName { get; set; } = string.Empty;
     
-    [Required(ErrorMessage = "Course is required")]
-    public string Course { get; set; } = string.Empty;
+    [Range(1, int.MaxValue, ErrorMessage = "Please select a course")]
+    public int CourseId { get; set; }
+
+    // This property can be kept to hold the joined CourseDescription for display purposes
+    public string? Course { get; set; }
 }

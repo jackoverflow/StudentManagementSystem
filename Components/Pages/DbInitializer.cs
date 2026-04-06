@@ -19,36 +19,56 @@ public static class DbInitializer
 
         var command = connection.CreateCommand();
 
-        // Create Students table (Simple Version)
+        // 1. Create Courses table
+        command.CommandText = @"
+            CREATE TABLE IF NOT EXISTS Courses (
+                CourseId INTEGER PRIMARY KEY AUTOINCREMENT,
+                CourseDescription TEXT NOT NULL
+            )";
+        command.ExecuteNonQuery();
+
+        // 2. Seed Courses if empty
+        command.CommandText = "SELECT COUNT(*) FROM Courses";
+        if ((long)command.ExecuteScalar() == 0)
+        {
+            string[] courses = { "Computer Science", "Information Technology", "Software Engineering", "Data Science" };
+            foreach (var courseName in courses)
+            {
+                command.CommandText = "INSERT INTO Courses (CourseDescription) VALUES (@desc)";
+                command.Parameters.Clear();
+                command.Parameters.AddWithValue("@desc", courseName);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        // 3. Create Students table (Relational Version)
         command.CommandText = @"
             CREATE TABLE IF NOT EXISTS Students (
                 Id TEXT PRIMARY KEY,
                 StudentNumber TEXT NOT NULL UNIQUE,
                 FullName TEXT NOT NULL,
-                Course TEXT
+                CourseId INTEGER,
+                FOREIGN KEY (CourseId) REFERENCES Courses(CourseId)
             )";
         command.ExecuteNonQuery();
 
-        // SCHEMA RECOVERY WORKAROUND:
-        // This handles switching back from the Relational branch (Version 2).
-        // If the 'Course' text column is missing (because the DB was created in Version 2),
-        // we add it back so this branch can function without crashing.
+        // 4. Migration: Ensure CourseId column exists if table was created in Version 1
         command.CommandText = "PRAGMA table_info(Students);";
-        var hasCourse = false;
+        bool hasCourseId = false;
         using (var reader = command.ExecuteReader())
         {
             while (reader.Read())
             {
-                if (reader["name"].ToString() == "Course")
+                if (reader["name"].ToString() == "CourseId")
                 {
-                    hasCourse = true;
+                    hasCourseId = true;
                 }
             }
         }
 
-        if (!hasCourse)
+        if (!hasCourseId)
         {
-            command.CommandText = "ALTER TABLE Students ADD COLUMN Course TEXT;";
+            command.CommandText = "ALTER TABLE Students ADD COLUMN CourseId INTEGER REFERENCES Courses(CourseId);";
             command.ExecuteNonQuery();
         }
 
@@ -59,25 +79,37 @@ public static class DbInitializer
 
         if (sampleCount == 0)
         {
+            using var transaction = connection.BeginTransaction();
+            command.Transaction = transaction;
+
             var students = new[]
             {
-                new Student { Id = Guid.NewGuid().ToString(), StudentNumber = "STU001", FullName = "John Doe", Course = "Computer Science" },
-                new Student { Id = Guid.NewGuid().ToString(), StudentNumber = "STU002", FullName = "Jane Smith", Course = "Information Technology" },
-                new Student { Id = Guid.NewGuid().ToString(), StudentNumber = "STU003", FullName = "Bob Johnson", Course = "Software Engineering" },
-                new Student { Id = Guid.NewGuid().ToString(), StudentNumber = "STU004", FullName = "Alice Brown", Course = "Data Science" }
+                new Student { Id = Guid.NewGuid().ToString(), StudentNumber = "STU001", FullName = "John Doe", CourseId = 1 },
+                new Student { Id = Guid.NewGuid().ToString(), StudentNumber = "STU002", FullName = "Jane Smith", CourseId = 2 },
+                new Student { Id = Guid.NewGuid().ToString(), StudentNumber = "STU003", FullName = "Bob Johnson", CourseId = 3 },
+                new Student { Id = Guid.NewGuid().ToString(), StudentNumber = "STU004", FullName = "Alice Brown", CourseId = 4 }
             };
 
-            foreach (var student in students)
+            try
             {
-                command.CommandText = @"
-                    INSERT INTO Students (Id, StudentNumber, FullName, Course)
-                    VALUES (@id, @studentNumber, @fullName, @course)";
-                command.Parameters.Clear();
-                command.Parameters.AddWithValue("@id", student.Id);
-                command.Parameters.AddWithValue("@studentNumber", student.StudentNumber);
-                command.Parameters.AddWithValue("@fullName", student.FullName);
-                command.Parameters.AddWithValue("@course", student.Course);
-                command.ExecuteNonQuery();
+                foreach (var student in students)
+                {
+                    command.CommandText = @"
+                        INSERT INTO Students (Id, StudentNumber, FullName, CourseId)
+                        VALUES (@id, @studentNumber, @fullName, @courseId)";
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@id", student.Id);
+                    command.Parameters.AddWithValue("@studentNumber", student.StudentNumber);
+                    command.Parameters.AddWithValue("@fullName", student.FullName);
+                    command.Parameters.AddWithValue("@courseId", student.CourseId);
+                    command.ExecuteNonQuery();
+                }
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
             }
         }
     }
