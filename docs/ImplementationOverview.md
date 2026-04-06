@@ -2,6 +2,18 @@
 
 This document provides an educational breakdown of the core components implemented in the initial phase of the Student Information System.
 
+## Project Evolution: The Two Versions
+
+This application is designed to demonstrate the progression from a simple data model to a professional relational architecture.
+
+*   **Version 1: The Flat Model (`StudentManagementSystem` branch)**
+    This version uses a simple string for the course name within the Student model. It is perfect for beginners learning basic CRUD operations without the complexity of database relationships.
+
+*   **Version 2: The Relational Model (`StudentCourseRelation` branch)**
+    This version introduces a separate `Courses` table and establishes a Foreign Key relationship. It demonstrates professional techniques such as SQL JOINs and data normalization.
+
+**Switching Versions:** To explore a specific version, use `git checkout [branch-name]` in your terminal.
+
 ## 1. Data Modeling (`Models/Student.cs`)
 The first step in any application is defining the data structure. We created a **POCO (Plain Old CLR Object)** class to represent a Student.
 

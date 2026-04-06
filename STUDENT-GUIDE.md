@@ -2,6 +2,15 @@
 
 **Yes!** This guide is written for beginner/intermediate students. Follow step-by-step to understand **every part**.
 
+> [!IMPORTANT]
+> **Project Versions & Branches**
+> This repository contains two versions to demonstrate architectural evolution:
+> 
+> *   **Version 1 (Flat Model)**: Located in the `StudentManagementSystem` branch. This version uses simple text strings for courses and is ideal for understanding basic CRUD.
+> *   **Version 2 (Relational Model)**: Located in the `StudentCourseRelation` branch. This version implements a professional database schema with a `Courses` table and Foreign Key relationships.
+>
+> **To switch versions:** Run `git checkout StudentManagementSystem` or `git checkout StudentCourseRelation` in your terminal.
+
 ## 1. The Big Picture
 ```
 Native App (MAUI) ← Embeds → Blazor Web UI (Components/*.razor) ← Talks to → SQLite DB (students.db)
