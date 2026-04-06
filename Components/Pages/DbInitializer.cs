@@ -25,8 +25,12 @@ public static class DbInitializer
             )";
         command.ExecuteNonQuery();
 
-        // Handle schema migration when switching back from the Relational branch.
-        // If the 'Course' column is missing (because it was replaced by CourseId), add it back.
+        // SCHEMA RECOVERY WORKAROUND:
+        // This logic handles the "downgrade" scenario where a user switches from the Relational branch (Version 2)
+        // back to this Simple branch (Version 1).
+        // In Version 2, the 'Course' column might have been replaced or modified.
+        // To prevent a crash, we "sniff" the table schema using PRAGMA. If the 'Course' column 
+        // is missing, we re-add it to maintain backward compatibility with this branch's data model.
         command.CommandText = "PRAGMA table_info(Students);";
         var columns = new List<string>();
         using (var reader = command.ExecuteReader())

@@ -3,7 +3,6 @@
 @using StudentSystemApp.Services
 @inject StudentRepository StudentRepo
 @inject NavigationManager Navigation
-@implements IDisposable
 
 <PageTitle>Create Student</PageTitle>
 
@@ -33,7 +32,7 @@
         </div>
 
         <button type="submit" class="btn btn-success me-2 create-btn" disabled="@isLoading">Create Student</button>
-        <button type="button" class="btn btn-secondary create-btn" @onclick="Cancel">Cancel</button>
+        <button type="button" class="btn btn-secondary create-btnc" @onclick="Cancel">Cancel</button>
     </EditForm>
 </div>
 
@@ -59,6 +58,4 @@
     {
         Navigation.NavigateTo("/students");
     }
-
-    public void Dispose() { }
 }
