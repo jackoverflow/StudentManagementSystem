@@ -28,18 +28,16 @@ public class StudentRepository
         return students;
     }
 
-    public async Task<string> CreateAsync(Student student)
+    public async Task CreateAsync(Student student)
     {
         using var connection = new SqliteConnection($"Data Source={_dbPath}");
         await connection.OpenAsync();
 
         const string sql = @"
-            INSERT INTO Students (StudentNumber, FullName, Course) 
-            VALUES (@StudentNumber, @FullName, @Course);
-            SELECT last_insert_rowid();";
+            INSERT INTO Students (Id, StudentNumber, FullName, Course)
+            VALUES (@Id, @StudentNumber, @FullName, @Course)";
 
-        var id = await connection.ExecuteScalarAsync<string>(sql, student);
-        return id ?? string.Empty;
+        await connection.ExecuteAsync(sql, student);
     }
 
     public async Task DeleteAsync(string id)

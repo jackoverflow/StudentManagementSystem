@@ -38,7 +38,7 @@
 </div>
 
 @code {
-    private Student student = new();
+    private Student student = new() { Id = Guid.NewGuid().ToString() };
     private bool isLoading = false;
 
     private async Task HandleValidSubmit()
