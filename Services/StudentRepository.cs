@@ -41,4 +41,13 @@ public class StudentRepository
         var id = await connection.ExecuteScalarAsync<string>(sql, student);
         return id ?? string.Empty;
     }
+
+    public async Task DeleteAsync(string id)
+    {
+        using var connection = new SqliteConnection($"Data Source={_dbPath}");
+        await connection.OpenAsync();
+
+        const string sql = "DELETE FROM Students WHERE Id = @Id";
+        await connection.ExecuteAsync(sql, new { Id = id });
+    }
 }
