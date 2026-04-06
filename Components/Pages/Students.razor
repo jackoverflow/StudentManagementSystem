@@ -86,11 +86,12 @@
         {
             await StudentRepo.DeleteAsync(id);
             await LoadStudents();
+            Console.WriteLine($"Deleted {id}, reloaded {students?.Count ?? 0} students");
         }
         catch (Exception ex)
         {
-            // Simple logging, could show toast/error
-            Console.WriteLine($"Delete error: {ex.Message}");
+            Console.WriteLine($"Delete error: {ex}");
+            StateHasChanged();
         }
         finally
         {
