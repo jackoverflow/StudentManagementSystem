@@ -1,4 +1,5 @@
 using Microsoft.Data.Sqlite;
+using System.IO;
 using StudentSystemApp.Models;
 
 namespace StudentSystemApp.Components.Pages;
@@ -7,7 +8,7 @@ public static class DbInitializer
 {
     public static void Initialize()
     {
-        var dbPath = "students.db";
+        var dbPath = Path.Combine(FileSystem.AppDataDirectory, "students.db");
 
         using var connection = new SqliteConnection($"Data Source={dbPath}");
         connection.Open();
@@ -23,6 +24,25 @@ public static class DbInitializer
                 Course TEXT NOT NULL
             )";
         command.ExecuteNonQuery();
+
+        // Handle schema migration when switching back from the Relational branch.
+        // If the 'Course' column is missing (because it was replaced by CourseId), add it back.
+        command.CommandText = "PRAGMA table_info(Students);";
+        bool hasCourseColumn = false;
+        using (var reader = command.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                if (string.Equals(reader["name"].ToString(), "Course", StringComparison.OrdinalIgnoreCase))
+                    hasCourseColumn = true;
+            }
+        }
+
+        if (!hasCourseColumn)
+        {
+            command.CommandText = "ALTER TABLE Students ADD COLUMN Course TEXT NOT NULL DEFAULT ''";
+            command.ExecuteNonQuery();
+        }
 
         // Insert sample data only if no STU00* records exist (prevents duplicates)
         command.CommandText = "SELECT COUNT(*) FROM Students WHERE StudentNumber LIKE 'STU00%'";

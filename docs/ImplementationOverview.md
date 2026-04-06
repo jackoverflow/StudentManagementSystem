@@ -14,6 +14,16 @@ This application is designed to demonstrate the progression from a simple data m
 
 **Switching Versions:** To explore a specific version, use `git checkout [branch-name]` in your terminal.
 
+## Architectural Flow
+```mermaid
+graph TD
+    A[User Interface - Razor] -->|Calls| B[StudentRepository]
+    B -->|SQL Queries| C[SQLite Database]
+    D[DbInitializer] -->|Seed Data| C
+    E[MauiProgram] -->|Registers| B
+    E -->|Invokes| D
+```
+
 ## 1. Data Modeling (`Models/Student.cs`)
 The first step in any application is defining the data structure. We created a **POCO (Plain Old CLR Object)** class to represent a Student.
 
@@ -60,6 +70,11 @@ Because .NET MAUI is cross-platform, we cannot use hardcoded file paths (like `C
 
 *   **`FileSystem.AppDataDirectory`**: This is a MAUI API that finds the correct, writable folder for the current operating system (e.g., `AppData` on Windows, or the App's internal storage on Android/iOS).
 *   **The Initialization Pattern**: Our `Initialize()` method uses the `CREATE TABLE IF NOT EXISTS` SQL command. This ensures that the first time a user opens the app, the schema is created, but on subsequent launches, the existing data remains untouched.
+
+### 6.1 Database Resilience & Branch Switching
+In this project, we handle a specific real-world problem: **Persistent local storage vs. Code versioning.**
+*   **The Problem**: When switching from the Relational branch back to the Flat branch, the physical database file on your disk still has the "Relational" structure (missing the `Course` column).
+*   **The Solution**: We implemented a "Self-Healing" check. The code queries `PRAGMA table_info(Students)` to inspect the database at runtime. If it detects the `Course` column is missing, it automatically runs an `ALTER TABLE` command to restore it, ensuring the app never crashes due to schema mismatches between branches.
 
 ## 7. The Application Entry Point (`MauiProgram.cs`)
 `MauiProgram` is the "brain" of the application setup.

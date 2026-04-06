@@ -2,13 +2,14 @@ using Dapper;
 using Microsoft.Data.Sqlite;
 using StudentSystemApp.Models;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace StudentSystemApp.Services;
 
 public class StudentRepository
 {
-    private readonly string _dbPath = "students.db";
+    private readonly string _dbPath = Path.Combine(FileSystem.AppDataDirectory, "students.db");
 
     public StudentRepository()
     {
@@ -76,4 +77,3 @@ public class StudentRepository
         await connection.ExecuteAsync(sql, student);
     }
 }
-

@@ -3,13 +3,20 @@
 **Yes!** This guide is written for beginner/intermediate students. Follow step-by-step to understand **every part**.
 
 > [!IMPORTANT]
-> **Project Versions & Branches**
-> This repository contains two versions to demonstrate architectural evolution:
-> 
-> *   **Version 1 (Flat Model)**: Located in the `StudentManagementSystem` branch. This version uses simple text strings for courses and is ideal for understanding basic CRUD.
-> *   **Version 2 (Relational Model)**: Located in the `StudentCourseRelation` branch. This version implements a professional database schema with a `Courses` table and Foreign Key relationships.
+> **Which version am I on?** 
+> This app has two versions. You are currently on **Version 2 (Relational)**. 
+> Unlike Version 1, which used simple text for courses, this version uses a professional database setup with IDs and Links (Foreign Keys).
 >
-> **To switch versions:** Run `git checkout StudentManagementSystem` or `git checkout StudentCourseRelation` in your terminal.
+> **Switching Versions via Terminal:**
+> *   Switch to Simple Version: `git checkout StudentManagementSystem`
+> *   Switch to Relational Version: `git checkout StudentCourseRelation`
+>
+> **Smart Branch Switching:**
+> We have added "Self-Healing" code in `DbInitializer.cs`. 
+> If you switch back to this branch from the Relational one, the app will notice if the `Course` column is missing 
+> and fix the database for you automatically. 
+> 
+> *No more "No such column: Course" errors!*
 
 ## 1. The Big Picture
 ```
