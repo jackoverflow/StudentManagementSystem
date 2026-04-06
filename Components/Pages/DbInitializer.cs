@@ -1,5 +1,7 @@
 using Microsoft.Data.Sqlite;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using StudentSystemApp.Models;
 
 namespace StudentSystemApp.Components.Pages;
@@ -54,6 +56,8 @@ public static class DbInitializer
 
         if (sampleCount == 0)
         {
+            using var transaction = connection.BeginTransaction();
+            command.Transaction = transaction;
             var students = new[]
             {
                 new Student { Id = Guid.NewGuid().ToString(), StudentNumber = "STU001", FullName = "John Doe", Course = "Computer Science" },
@@ -62,17 +66,26 @@ public static class DbInitializer
                 new Student { Id = Guid.NewGuid().ToString(), StudentNumber = "STU004", FullName = "Alice Brown", Course = "Data Science" }
             };
 
-            foreach (var student in students)
+            try
             {
-                command.CommandText = @"
-                    INSERT INTO Students (Id, StudentNumber, FullName, Course)
-                    VALUES (@id, @studentNumber, @fullName, @course)";
-                command.Parameters.Clear();
-                command.Parameters.AddWithValue("@id", student.Id);
-                command.Parameters.AddWithValue("@studentNumber", student.StudentNumber);
-                command.Parameters.AddWithValue("@fullName", student.FullName);
-                command.Parameters.AddWithValue("@course", student.Course);
-                command.ExecuteNonQuery();
+                foreach (var student in students)
+                {
+                    command.CommandText = @"
+                        INSERT INTO Students (Id, StudentNumber, FullName, Course)
+                        VALUES (@id, @studentNumber, @fullName, @course)";
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@id", student.Id);
+                    command.Parameters.AddWithValue("@studentNumber", student.StudentNumber);
+                    command.Parameters.AddWithValue("@fullName", student.FullName);
+                    command.Parameters.AddWithValue("@course", student.Course);
+                    command.ExecuteNonQuery();
+                }
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
             }
         }
     }
