@@ -17,4 +17,6 @@ public class Student
     [Required(ErrorMessage = "Course is required")]
     [StringLength(50, ErrorMessage = "Max 50 chars")]
     public string Course { get; set; } = string.Empty;
+
+    public int CourseId { get; set; }
 }
