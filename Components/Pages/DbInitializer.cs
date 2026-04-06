@@ -38,15 +38,30 @@ public static class DbInitializer
             )";
         command.ExecuteNonQuery();
 
-        // World-class tip: Check if the new column exists, if not, add it.
-        // This handles existing databases from previous versions of the app.
+        // SCHEMA MIGRATION WORKAROUND:
+        // This logic handles existing 'students.db' files from Version 1 of the application.
+        // Version 1 used a simple text field for courses, while Version 2 uses a relational 'CourseId'.
+        // Instead of forcing users to delete their data, we "sniff" the table schema using PRAGMA.
+        // If 'CourseId' is missing, we perform an 'ALTER TABLE' to add the column and maintain 
+        // backward compatibility without crashing the app on startup.
         command.CommandText = "PRAGMA table_info(Students);";
         var hasCourseId = false;
         using (var reader = command.ExecuteReader())
         {
-            while (reader.Read()) { if (reader["name"].ToString() == "CourseId") hasCourseId = true; }
+            while (reader.Read())
+            {
+                if (reader["name"].ToString() == "CourseId")
+                {
+                    hasCourseId = true;
+                }
+            }
         }
-        if (!hasCourseId) { command.CommandText = "ALTER TABLE Students ADD COLUMN CourseId INTEGER REFERENCES Courses(CourseId);"; command.ExecuteNonQuery(); }
+
+        if (!hasCourseId)
+        {
+            command.CommandText = "ALTER TABLE Students ADD COLUMN CourseId INTEGER REFERENCES Courses(CourseId);";
+            command.ExecuteNonQuery();
+        }
 
         // Seed Courses if empty
         command.CommandText = "SELECT COUNT(*) FROM Courses";
