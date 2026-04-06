@@ -43,8 +43,8 @@
                 <ValidationMessage For="@(() => student.Course)" />
             </div>
 
-            <button type="submit" class="btn btn-primary me-2" disabled="@isLoading">Update Student</button>
-            <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary me-2 btn-edits" disabled="@isLoading">Update Student</button>
+            <button type="button" class="btn btn-secondary btn-edits" @onclick="Cancel">Cancel</button>
         </EditForm>
     }
 </div>
