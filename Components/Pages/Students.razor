@@ -14,9 +14,12 @@
         <NavLink href="/students/create" class="btn btn-primary">+ New Student</NavLink>
     </div>
 
-    @if (isLoading)
+@if (isLoading || isDeleting)
     {
-        <div class="alert alert-info">Loading students...</div>
+        <div class="alert alert-info">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            @(isDeleting ? "Deleting student..." : "Loading students...")
+        </div>
     }
     else if (students?.Any() != true)
     {
