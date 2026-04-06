@@ -28,17 +28,16 @@ public static class DbInitializer
         // Handle schema migration when switching back from the Relational branch.
         // If the 'Course' column is missing (because it was replaced by CourseId), add it back.
         command.CommandText = "PRAGMA table_info(Students);";
-        bool hasCourseColumn = false;
+        var columns = new List<string>();
         using (var reader = command.ExecuteReader())
         {
             while (reader.Read())
             {
-                if (string.Equals(reader["name"].ToString(), "Course", StringComparison.OrdinalIgnoreCase))
-                    hasCourseColumn = true;
+                columns.Add(reader["name"].ToString() ?? "");
             }
         }
 
-        if (!hasCourseColumn)
+        if (!columns.Any(c => string.Equals(c, "Course", StringComparison.OrdinalIgnoreCase)))
         {
             command.CommandText = "ALTER TABLE Students ADD COLUMN Course TEXT NOT NULL DEFAULT ''";
             command.ExecuteNonQuery();
