@@ -2,13 +2,14 @@ using Dapper;
 using Microsoft.Data.Sqlite;
 using StudentSystemApp.Models;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace StudentSystemApp.Services;
 
 public class StudentRepository
 {
-    private readonly string _dbPath = "students.db";
+    private readonly string _dbPath = Path.Combine(FileSystem.AppDataDirectory, "students.db");
 
     public StudentRepository()
     {
@@ -21,8 +22,9 @@ public class StudentRepository
         await connection.OpenAsync();
 
         const string sql = @"
-            SELECT Id, StudentNumber, FullName, Course 
-            FROM Students";
+            SELECT s.Id, s.StudentNumber, s.FullName, s.CourseId, c.CourseDescription as Course
+            FROM Students s
+            LEFT JOIN Courses c ON s.CourseId = c.CourseId";
 
         var students = (await connection.QueryAsync<Student>(sql)).AsList();
         return students;
@@ -34,8 +36,8 @@ public class StudentRepository
         await connection.OpenAsync();
 
         const string sql = @"
-            INSERT INTO Students (Id, StudentNumber, FullName, Course)
-            VALUES (@Id, @StudentNumber, @FullName, @Course)";
+            INSERT INTO Students (Id, StudentNumber, FullName, CourseId)
+            VALUES (@Id, @StudentNumber, @FullName, @CourseId)";
 
         await connection.ExecuteAsync(sql, student);
     }
@@ -55,8 +57,10 @@ public class StudentRepository
         await connection.OpenAsync();
 
         const string sql = @"
-            SELECT Id, StudentNumber, FullName, Course
-            FROM Students WHERE Id = @Id";
+            SELECT s.Id, s.StudentNumber, s.FullName, s.CourseId, c.CourseDescription as Course
+            FROM Students s
+            LEFT JOIN Courses c ON s.CourseId = c.CourseId
+            WHERE s.Id = @Id";
 
         return await connection.QuerySingleOrDefaultAsync<Student>(sql, new { Id = id });
     }
@@ -70,10 +74,9 @@ public class StudentRepository
             UPDATE Students 
             SET StudentNumber = @StudentNumber, 
                 FullName = @FullName, 
-                Course = @Course
+                CourseId = @CourseId
             WHERE Id = @Id";
 
         await connection.ExecuteAsync(sql, student);
     }
 }
-

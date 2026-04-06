@@ -1,0 +1,85 @@
+@page "/courses"
+@using StudentSystemApp.Models
+@using StudentSystemApp.Services
+@inject CourseRepository CourseRepo
+
+<PageTitle>Courses</PageTitle>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Course Management</h2>
+    </div>
+
+    <div class="card p-4 mb-4">
+        <h4>Add New Course</h4>
+        <EditForm Model="newCourse" OnValidSubmit="HandleCreate">
+            <DataAnnotationsValidator />
+            <div class="input-group">
+                <InputText @bind-Value="newCourse.CourseDescription" class="form-control" placeholder="Course Description" />
+                <button type="submit" class="btn btn-success">Add Course</button>
+            </div>
+            <ValidationMessage For="@(() => newCourse.CourseDescription)" />
+        </EditForm>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (courses == null)
+            {
+                <tr><td colspan="3">Loading...</td></tr>
+            }
+            else if (!courses.Any())
+            {
+                <tr><td colspan="3">No courses found.</td></tr>
+            }
+            else
+            {
+                @foreach (var course in courses)
+                {
+                    <tr>
+                        <td>@course.CourseId</td>
+                        <td>@course.CourseDescription</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" @onclick="() => DeleteCourse(course.CourseId)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private List<Course>? courses;
+    private Course newCourse = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCourses();
+    }
+
+    private async Task LoadCourses()
+    {
+        courses = await CourseRepo.GetAllAsync();
+    }
+
+    private async Task HandleCreate()
+    {
+        await CourseRepo.CreateAsync(newCourse);
+        newCourse = new();
+        await LoadCourses();
+    }
+
+    private async Task DeleteCourse(int id)
+    {
+        await CourseRepo.DeleteAsync(id);
+        await LoadCourses();
+    }
+}
