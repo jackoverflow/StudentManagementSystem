@@ -1,0 +1,91 @@
+@page "/students/edit/{Id:string}"
+@using StudentSystemApp.Models
+@using StudentSystemApp.Services
+@inject StudentRepository StudentRepo
+@inject NavigationManager Navigation
+@implements IDisposable
+
+<PageTitle>Edit Student</PageTitle>
+
+<div class="container mt-4">
+    <h2>Edit Student</h2>
+
+    @if (studentNotFound)
+    {
+        <div class="alert alert-danger">Student not found.</div>
+    }
+    else
+    {
+        <EditForm Model="student" OnValidSubmit="HandleValidSubmit" class="card p-4">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label>ID (Read-only)</label>
+                <InputText class="form-control" @bind-Value="student.Id" disabled />
+            </div>
+
+            <div class="mb-3">
+                <label>Student Number</label>
+                <InputText @bind-Value="student.StudentNumber" class="form-control" />
+                <ValidationMessage For="@(() => student.StudentNumber)" />
+            </div>
+
+            <div class="mb-3">
+                <label>Full Name</label>
+                <InputText @bind-Value="student.FullName" class="form-control" />
+                <ValidationMessage For="@(() => student.FullName)" />
+            </div>
+
+            <div class="mb-3">
+                <label>Course</label>
+                <InputText @bind-Value="student.Course" class="form-control" />
+                <ValidationMessage For="@(() => student.Course)" />
+            </div>
+
+            <button type="submit" class="btn btn-primary me-2" disabled="@isLoading">Update Student</button>
+            <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+        </EditForm>
+    }
+</div>
+
+@code {
+    [Parameter] public string Id { get; set; } = string.Empty;
+    private Student student = new();
+    private bool isLoading = false;
+    private bool studentNotFound = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var loadedStudent = await StudentRepo.GetByIdAsync(Id);
+        if (loadedStudent == null)
+        {
+            studentNotFound = true;
+        }
+        else
+        {
+            student = loadedStudent;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        isLoading = true;
+        try
+        {
+            await StudentRepo.UpdateAsync(student);
+            Navigation.NavigateTo("/students");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/students");
+    }
+
+    public void Dispose() { }
+}

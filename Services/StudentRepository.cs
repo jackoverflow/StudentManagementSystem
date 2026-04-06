@@ -50,4 +50,32 @@ public class StudentRepository
         const string sql = "DELETE FROM Students WHERE Id = @Id";
         await connection.ExecuteAsync(sql, new { Id = id });
     }
+
+    public async Task<Student?> GetByIdAsync(string id)
+    {
+        using var connection = new SqliteConnection($"Data Source={_dbPath}");
+        await connection.OpenAsync();
+
+        const string sql = @"
+            SELECT Id, StudentNumber, FullName, Course
+            FROM Students WHERE Id = @Id";
+
+        return await connection.QuerySingleOrDefaultAsync<Student>(sql, new { Id = id });
+    }
+
+    public async Task UpdateAsync(Student student)
+    {
+        using var connection = new SqliteConnection($"Data Source={_dbPath}");
+        await connection.OpenAsync();
+
+        const string sql = @"
+            UPDATE Students 
+            SET StudentNumber = @StudentNumber, 
+                FullName = @FullName, 
+                Course = @Course
+            WHERE Id = @Id";
+
+        await connection.ExecuteAsync(sql, student);
+    }
 }
+
