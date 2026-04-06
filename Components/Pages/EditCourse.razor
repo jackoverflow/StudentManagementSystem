@@ -1,0 +1,72 @@
+@page "/courses/edit/{Id:int}"
+@using StudentSystemApp.Models
+@using StudentSystemApp.Services
+@inject CourseRepository CourseRepo
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Course</PageTitle>
+
+<div class="container mt-4">
+    <h2>Edit Course</h2>
+
+    @if (courseNotFound)
+    {
+        <div class="alert alert-danger">Course not found.</div>
+        <button class="btn btn-secondary" @onclick="BackToList">Back to List</button>
+    }
+    else
+    {
+        <div class="card p-4">
+            <EditForm Model="course" OnValidSubmit="HandleUpdate">
+                <DataAnnotationsValidator />
+                
+                <div class="mb-3">
+                    <label class="form-label">Course ID (Read-only)</label>
+                    <input type="text" class="form-control" value="@course.CourseId" disabled />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Course Description</label>
+                    <InputText @bind-Value="course.CourseDescription" class="form-control" />
+                    <ValidationMessage For="@(() => course.CourseDescription)" />
+                </div>
+
+                <button type="submit" class="btn btn-primary me-2 btn-edits" disabled="@isLoading">Update Course</button>
+                <button type="button" class="btn btn-secondary btn-edits" @onclick="BackToList">Cancel</button>
+            </EditForm>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Course course = new();
+    private bool isLoading = false;
+    private bool courseNotFound = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var loadedCourse = await CourseRepo.GetByIdAsync(Id);
+        if (loadedCourse == null)
+        {
+            courseNotFound = true;
+        }
+        else
+        {
+            course = loadedCourse;
+        }
+    }
+
+    private async Task HandleUpdate()
+    {
+        isLoading = true;
+        await CourseRepo.UpdateAsync(course);
+        isLoading = false;
+        Navigation.NavigateTo("/courses");
+    }
+
+    private void BackToList()
+    {
+        Navigation.NavigateTo("/courses");
+    }
+}

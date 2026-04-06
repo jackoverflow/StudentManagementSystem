@@ -27,16 +27,6 @@ public static class DbInitializer
             )";
         command.ExecuteNonQuery();
 
-        // World-class tip: Check if the new column exists, if not, add it.
-        // This handles existing databases from previous versions of the app.
-        command.CommandText = "PRAGMA table_info(Students);";
-        var hasCourseId = false;
-        using (var reader = command.ExecuteReader())
-        {
-            while (reader.Read()) { if (reader["name"].ToString() == "CourseId") hasCourseId = true; }
-        }
-        if (!hasCourseId) { command.CommandText = "ALTER TABLE Students ADD COLUMN CourseId INTEGER REFERENCES Courses(CourseId);"; command.ExecuteNonQuery(); }
-
         // Create Students table with Foreign Key
         command.CommandText = @"
             CREATE TABLE IF NOT EXISTS Students (
@@ -47,6 +37,16 @@ public static class DbInitializer
                 FOREIGN KEY(CourseId) REFERENCES Courses(CourseId) ON DELETE SET NULL
             )";
         command.ExecuteNonQuery();
+
+        // World-class tip: Check if the new column exists, if not, add it.
+        // This handles existing databases from previous versions of the app.
+        command.CommandText = "PRAGMA table_info(Students);";
+        var hasCourseId = false;
+        using (var reader = command.ExecuteReader())
+        {
+            while (reader.Read()) { if (reader["name"].ToString() == "CourseId") hasCourseId = true; }
+        }
+        if (!hasCourseId) { command.CommandText = "ALTER TABLE Students ADD COLUMN CourseId INTEGER REFERENCES Courses(CourseId);"; command.ExecuteNonQuery(); }
 
         // Seed Courses if empty
         command.CommandText = "SELECT COUNT(*) FROM Courses";

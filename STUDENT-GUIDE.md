@@ -2,6 +2,15 @@
 
 **Yes!** This guide is written for beginner/intermediate students. Follow step-by-step to understand **every part**.
 
+> [!IMPORTANT]
+> **Which version am I on?** 
+> This app has two versions. You are currently on **Version 2 (Relational)**. 
+> Unlike Version 1, which used simple text for courses, this version uses a professional database setup with IDs and Links (Foreign Keys).
+>
+> **Switching Versions via Terminal:**
+> *   Switch to Simple Version: `git checkout StudentManagementSystem`
+> *   Switch to Relational Version: `git checkout StudentCourseRelation`
+
 ## 1. The Big Picture
 ```
 Native App (MAUI) ← Embeds → Blazor Web UI (Components/*.razor) ← Talks to → SQLite DB (students.db)

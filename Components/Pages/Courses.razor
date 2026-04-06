@@ -2,6 +2,7 @@
 @using StudentSystemApp.Models
 @using StudentSystemApp.Services
 @inject CourseRepository CourseRepo
+@inject IJSRuntime JS
 
 <PageTitle>Courses</PageTitle>
 
@@ -47,6 +48,7 @@
                         <td>@course.CourseId</td>
                         <td>@course.CourseDescription</td>
                         <td>
+                            <a href="/courses/edit/@course.CourseId" class="btn btn-primary btn-sm me-1">Edit</a>
                             <button class="btn btn-danger btn-sm" @onclick="() => DeleteCourse(course.CourseId)">Delete</button>
                         </td>
                     </tr>
@@ -79,6 +81,9 @@
 
     private async Task DeleteCourse(int id)
     {
+        var confirmed = await JS.InvokeAsync<bool>("confirm", "Are you sure you want to delete this course?");
+        if (!confirmed) return;
+
         await CourseRepo.DeleteAsync(id);
         await LoadCourses();
     }
