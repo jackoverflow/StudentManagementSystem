@@ -87,6 +87,10 @@ h1:focus {
     margin-bottom: 15px;
     width: 90%!important;
 }
+.create-btn {
+    margin-bottom: 5px;
+    width: 95%;
+}
 
 @supports (-webkit-touch-callout: none) {
     .status-bar-safe-area {
