@@ -128,4 +128,6 @@ Sample data:
 - Push notifications (MAUI Essentials)
 
 ## Credits
-Generated with MAUI Blazor template, enhanced with SQLite + Dapper student management.
+**Developed by Pio Leonardo Rapirap**
+
+Generated with MAUI Blazor template, enhanced with SQLite + Dapper for full CRUD by Pio Leonardo Rapirap.
