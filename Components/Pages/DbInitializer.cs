@@ -24,12 +24,12 @@ public static class DbInitializer
             )";
         command.ExecuteNonQuery();
 
-        // Insert sample data if table is empty
-        command.CommandText = "SELECT COUNT(*) FROM Students";
-        var countObj = command.ExecuteScalar();
-        var count = countObj != null ? (long)countObj : 0;
+        // Insert sample data only if no STU00* records exist (prevents duplicates)
+        command.CommandText = "SELECT COUNT(*) FROM Students WHERE StudentNumber LIKE 'STU00%'";
+        var sampleCountObj = command.ExecuteScalar();
+        var sampleCount = sampleCountObj != null ? (long)sampleCountObj : 0;
 
-        if (count == 0)
+        if (sampleCount == 0)
         {
             var students = new[]
             {
