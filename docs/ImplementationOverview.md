@@ -48,6 +48,11 @@ Blazor applications are built using Razor components. These combine HTML markup 
 Inside the `@code` block, we override `OnInitialized()`. This is a lifecycle method that runs when the component is first loaded. 
 *   **Data Seeding**: We use this moment to populate our in-memory `List<Student>` with dummy data so the UI isn't empty on the first run.
 
+### Component Reuse and `OnParametersSetAsync`
+In `EditStudent.razor`, we utilize `OnParametersSetAsync` instead of `OnInitializedAsync` for fetching student data.
+*   **The Issue**: If a user navigates directly from one student's edit page to another (e.g., from ID 1 to ID 2), Blazor reuses the existing component instance. In this scenario, `OnInitializedAsync` only fires for the first student.
+*   **The Solution**: `OnParametersSetAsync` fires every time the route parameters (the `Id`) change, ensuring the UI always reflects the data associated with the current URL.
+
 ### Conditional Rendering
 In the HTML section, we use C# control flow (`@if`, `@else if`, `@else`) to handle different states of the data:
 1.  **Loading State**: Shown if the list is null.
