@@ -12,7 +12,15 @@ This application is designed to demonstrate the progression from a simple data m
 *   **Version 2: The Relational Model (`StudentCourseRelation` branch)**
     This version introduces a separate `Courses` table and establishes a Foreign Key relationship. It demonstrates professional techniques such as SQL JOINs and data normalization.
 
-**Switching Versions:** To explore a specific version, use `git checkout [branch-name]` in your terminal.
+**To view Version 1 (Simple/Flat):**
+```bash
+git checkout StudentManagementSystem
+```
+
+**To view Version 2 (Relational/Current):**
+```bash
+git checkout StudentCourseRelation
+```
 
 ## Architectural Flow
 ```mermaid
