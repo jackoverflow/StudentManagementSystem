@@ -2,6 +2,7 @@
 @using StudentSystemApp.Models
 @using StudentSystemApp.Services
 @inject StudentRepository StudentRepo
+@inject CourseRepository CourseRepo
 @inject NavigationManager Navigation
 
 <PageTitle>Edit Student</PageTitle>
@@ -38,8 +39,14 @@
 
             <div class="mb-3">
                 <label>Course</label>
-                <InputText @bind-Value="student.Course" class="form-control" />
-                <ValidationMessage For="@(() => student.Course)" />
+                <InputSelect @bind-Value="student.CourseId" class="form-select">
+                    <option value="0">-- Select a Course --</option>
+                    @foreach (var course in courses)
+                    {
+                        <option value="@course.CourseId">@course.CourseDescription</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => student.CourseId)" />
             </div>
 
             <button type="submit" class="btn btn-primary me-2 btn-edits" disabled="@isLoading">Update Student</button>
@@ -51,11 +58,13 @@
 @code {
     [Parameter] public string Id { get; set; } = string.Empty;
     private Student student = new();
+    private List<Course> courses = new();
     private bool isLoading = false;
     private bool studentNotFound = false;
 
     protected override async Task OnInitializedAsync()
     {
+        courses = await CourseRepo.GetAllAsync();
         var loadedStudent = await StudentRepo.GetByIdAsync(Id);
         if (loadedStudent == null)
         {
