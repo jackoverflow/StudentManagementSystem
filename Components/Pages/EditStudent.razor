@@ -65,6 +65,10 @@
     protected override async Task OnInitializedAsync()
     {
         courses = await CourseRepo.GetAllAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
         var loadedStudent = await StudentRepo.GetByIdAsync(Id);
         if (loadedStudent == null)
         {
