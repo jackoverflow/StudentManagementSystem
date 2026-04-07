@@ -18,6 +18,8 @@ public static class MauiProgram
         // Initialize the SQLite database
         StudentSystemApp.Components.Pages.DbInitializer.Initialize();
         builder.Services.AddSingleton<StudentRepository>();
+        builder.Services.AddSingleton<CourseRepository>();
+
 
 		builder.Services.AddMauiBlazorWebView();
 
