@@ -21,9 +21,7 @@ public class StudentRepository
         using var connection = new SqliteConnection($"Data Source={_dbPath}");
         await connection.OpenAsync();
 
-        const string sql = @"
-            SELECT Id, StudentNumber, FullName, Course 
-            FROM Students";
+        const string sql = "SELECT * FROM Students";
 
         var students = (await connection.QueryAsync<Student>(sql)).AsList();
         return students;
@@ -55,9 +53,7 @@ public class StudentRepository
         using var connection = new SqliteConnection($"Data Source={_dbPath}");
         await connection.OpenAsync();
 
-        const string sql = @"
-            SELECT Id, StudentNumber, FullName, Course
-            FROM Students WHERE Id = @Id";
+        const string sql = "SELECT * FROM Students WHERE Id = @Id";
 
         return await connection.QuerySingleOrDefaultAsync<Student>(sql, new { Id = id });
     }
@@ -70,7 +66,7 @@ public class StudentRepository
         const string sql = @"
             UPDATE Students 
             SET StudentNumber = @StudentNumber, 
-                FullName = @FullName, 
+                FullName = @FullName,
                 Course = @Course
             WHERE Id = @Id";
 

@@ -17,7 +17,7 @@ public static class DbInitializer
 
         var command = connection.CreateCommand();
 
-        // Create Students table
+        // Create Students table (Simple Version)
         command.CommandText = @"
             CREATE TABLE IF NOT EXISTS Students (
                 Id TEXT PRIMARY KEY,
@@ -26,28 +26,6 @@ public static class DbInitializer
                 Course TEXT NOT NULL
             )";
         command.ExecuteNonQuery();
-
-        // SCHEMA RECOVERY WORKAROUND:
-        // This logic handles the "downgrade" scenario where a user switches from the Relational branch (Version 2)
-        // back to this Simple branch (Version 1).
-        // In Version 2, the 'Course' column might have been replaced or modified.
-        // To prevent a crash, we "sniff" the table schema using PRAGMA. If the 'Course' column 
-        // is missing, we re-add it to maintain backward compatibility with this branch's data model.
-        command.CommandText = "PRAGMA table_info(Students);";
-        var columns = new List<string>();
-        using (var reader = command.ExecuteReader())
-        {
-            while (reader.Read())
-            {
-                columns.Add(reader["name"].ToString() ?? "");
-            }
-        }
-
-        if (!columns.Any(c => string.Equals(c, "Course", StringComparison.OrdinalIgnoreCase)))
-        {
-            command.CommandText = "ALTER TABLE Students ADD COLUMN Course TEXT NOT NULL DEFAULT ''";
-            command.ExecuteNonQuery();
-        }
 
         // Insert sample data only if no STU00* records exist (prevents duplicates)
         command.CommandText = "SELECT COUNT(*) FROM Students WHERE StudentNumber LIKE 'STU00%'";
