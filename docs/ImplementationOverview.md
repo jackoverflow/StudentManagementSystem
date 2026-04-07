@@ -22,7 +22,7 @@ You can use the following Git commands to toggle between the two architectural s
 
 **To view Version 1 (Simple/Flat):**
 ```bash
-git checkout main
+git checkout StudentManagementSystem
 ```
 
 **To view Version 2 (Relational/Current):**
