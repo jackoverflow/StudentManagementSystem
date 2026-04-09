@@ -50,7 +50,7 @@ The app installs and launches automatically.
 
 3. Publish APK:
    ```
-   dotnet publish -f net8.0-android -c Release -p:AndroidPackageFormat=apk --no-restore
+dotnet restore --source https://aka.ms/dotnet9/nuget/index.json && dotnet publish -f net9.0-android -c Release -p:AndroidPackageFormat=apk --no-restore
    ```
    - APK generated at: `bin\\Release\\net8.0-android\\publish\\StudentSystemApp.apk`.
 
