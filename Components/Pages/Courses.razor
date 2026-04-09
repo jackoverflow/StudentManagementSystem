@@ -23,39 +23,41 @@
         </EditForm>
     </div>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Description</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (courses == null)
-            {
-                <tr><td colspan="3">Loading...</td></tr>
-            }
-            else if (!courses.Any())
-            {
-                <tr><td colspan="3">No courses found.</td></tr>
-            }
-            else
-            {
-                @foreach (var course in courses)
+    <div class="table-responsive mb-3">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (courses == null)
                 {
-                    <tr>
-                        <td>@course.CourseId</td>
-                        <td>@course.CourseDescription</td>
-                        <td>
-                            <a href="/courses/edit/@course.CourseId" class="btn btn-primary btn-sm me-1">Edit</a>
-                            <button class="btn btn-danger btn-sm" @onclick="() => DeleteCourse(course.CourseId)">Delete</button>
-                        </td>
-                    </tr>
+                    <tr><td colspan="3">Loading...</td></tr>
                 }
-            }
-        </tbody>
-    </table>
+                else if (!courses.Any())
+                {
+                    <tr><td colspan="3">No courses found.</td></tr>
+                }
+                else
+                {
+                    @foreach (var course in courses)
+                    {
+                        <tr>
+                            <td>@course.CourseId</td>
+                            <td>@course.CourseDescription</td>
+                            <td>
+                                <a href="/courses/edit/@course.CourseId" class="btn btn-primary btn-sm me-1">Edit</a>
+                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteCourse(course.CourseId)">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 
 @code {
