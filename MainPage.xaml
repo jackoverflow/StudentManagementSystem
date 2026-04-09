@@ -5,9 +5,11 @@
              xmlns:components="clr-namespace:StudentSystemApp.Components"
              x:Class="StudentSystemApp.MainPage">
 
-    <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+    <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html"
+                                           VerticalOptions="FillAndExpand"
+                                           HorizontalOptions="FillAndExpand">
         <BlazorWebView.RootComponents>
-            <RootComponent Selector="#app" ComponentType="{x:Type components:Routes}" />
+            <RootComponent Selector="#app" ComponentType="{x:Type components:AppRouter}" />
         </BlazorWebView.RootComponents>
     </BlazorWebView>
 
