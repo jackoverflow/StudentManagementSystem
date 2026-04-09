@@ -1,96 +1,73 @@
 # Installing StudentSystemApp on Android Device
 
-This guide provides step-by-step instructions to build and install the StudentSystemApp (a .NET MAUI Blazor Hybrid app) on an Android device using Visual Studio, .NET CLI, and ADB (Android Debug Bridge).
+This guide provides step-by-step instructions to build and install the StudentSystemApp (.NET MAUI Blazor Hybrid, net9.0-android) on an Android device using Visual Studio, .NET CLI, and ADB.
 
 ## Prerequisites
 
 1. **Development Environment**:
-   - Visual Studio 2022 (17.7+) with **.NET MAUI** workload installed.
-   - Or .NET 8 SDK installed ([download](https://dotnet.microsoft.com/download/dotnet/8.0)).
-   - Android SDK (included with Visual Studio or via Android Studio).
+   - Visual Studio 2022 with .NET MAUI workload.
+   - .NET 9 SDK + workloads:
+     ```
+     dotnet workload install maui-android --source https://aka.ms/dotnet9/nuget/index.json
+     dotnet workload restore
+     ```
+     ([.NET 9 download](https://dotnet.microsoft.com/download/dotnet/9.0)).
+   - Android SDK (VS or Android Studio).
 
 2. **Android Device**:
-   - Android device with API level 21+ (Android 5.0+).
-   - USB debugging enabled:
-     - Go to **Settings > About phone** → Tap **Build number** 7 times to enable Developer options.
-     - Go to **Settings > Developer options** → Enable **USB debugging**.
-   - USB cable for connection.
+   - API 21+.
+   - USB debugging enabled (Settings > Developer options).
 
-3. **ADB (Android Debug Bridge)**:
-   - Install Android SDK Platform-Tools:
-     - [Download from Google](https://developer.android.com/tools/releases/platform-tools).
-     - Extract to a folder, e.g., `C:\\android-sdk\\platform-tools`.
-     - Add to PATH: `C:\\android-sdk\\platform-tools` (restart terminal/VS after).
+3. **ADB**:
+   - Download Platform-Tools, add `platform-tools` to PATH.
 
-## Method 1: Using Visual Studio (Recommended)
+## Method 1: Visual Studio (Recommended)
 
-1. Open `StudentSystemApp.sln` in Visual Studio.
+1. Open `StudentSystemApp.sln`.
+2. Connect device.
+3. Select Android device & net9.0-android target.
+4. F5 to deploy.
 
-2. Connect Android device via USB (authorize if prompted).
+## Method 2: .NET CLI + ADB
 
-3. In toolbar:
-   - Select **Debug** target.
-   - Select your **Android device** from the device dropdown.
+1. Terminal in project root.
+2. `adb devices` (authorize).
 
-4. Ensure **StudentSystemApp** (Android target) is startup project.
-
-5. Press **F5** or click **Run** to build and deploy.
-
-The app installs and launches automatically.
-
-## Method 2: Using .NET CLI + ADB
-
-1. Open terminal in project root (`c:/Users/My PC/OneDrive/Desktop/Dev/StudentSystem/StudentSystemApp`).
-
-2. Connect device and verify with ADB:
+3. **Restore & Publish APK (Release)**:
    ```
-   adb devices
+   dotnet restore --source https://aka.ms/dotnet9/nuget/index.json
+   dotnet publish -f net9.0-android -c Release -p:AndroidPackageFormat=apk -r android-arm64
    ```
-   - Output should list your device (e.g., `ABC1234 device`). Authorize if prompted.
+   - APK: `bin/Release/net9.0-android/android-arm64/publish/StudentSystemApp.apk`
+   - **Signed APK** (recommended): `bin/Release/net9.0-android/android-arm64/com.companyname.studentsystemapp-Signed.apk`
+   - RID: android-arm64 (phone) or android-x64 (tablet).
 
-3. Publish APK:
+4. **Install**:
    ```
-dotnet restore --source https://aka.ms/dotnet9/nuget/index.json && dotnet publish -f net9.0-android -c Release -p:AndroidPackageFormat=apk --no-restore
+   adb install "bin/Release/net9.0-android/android-arm64/com.companyname.studentsystemapp-Signed.apk"
    ```
-   - APK generated at: `bin\\Release\\net8.0-android\\publish\\StudentSystemApp.apk`.
+   (Or unsigned: replace with StudentSystemApp.apk).
 
-4. Install via ADB:
-   ```
-   adb install bin\\Release\\net8.0-android\\publish\\StudentSystemApp.apk
-   ```
-
-5. Launch app:
+5. **Launch**:
    ```
    adb shell am start -n com.companyname.studentsystemapp/com.companyname.studentsystemapp.MainActivity
    ```
-   - Package name from `Platforms\\Android\\AndroidManifest.xml`.
 
 ## Troubleshooting
 
-- **Device not detected**:
-  - Run `adb kill-server && adb start-server`.
-  - Check USB drivers (install Google USB Driver if needed).
-  - Try different USB cable/port.
-
-- **Build errors**:
-  - Ensure Android SDK paths set in VS: **Tools > Options > Xamarin > Android Settings**.
-  - Clean/Rebuild: `dotnet clean && dotnet build`.
-
-- **App crashes**:
-  - Check logs: `adb logcat`.
-  - Ensure .NET 8 runtime for Android if using AOT.
-
-- **Multiple devices**:
-  - Specify device: `adb -s ABC1234 install app.apk`.
+- **Restore fails**: Run restore with preview source above.
+- **Platform error**: csproj TargetFrameworkVersion=34.0.
+- **Device**: `adb kill-server && adb start-server`.
+- Logs: `adb logcat`.
+- Clean: `dotnet clean`.
 
 ## Uninstall
-
 ```
 adb uninstall com.companyname.studentsystemapp
 ```
 
-For production, generate AAB for Play Store:
+**Production AAB**:
 ```
-dotnet publish -f net8.0-android -c Release -p:AndroidPackageFormat=aab
+dotnet publish -f net9.0-android -c Release -p:AndroidPackageFormat=aab -r android-arm64
 ```
 
