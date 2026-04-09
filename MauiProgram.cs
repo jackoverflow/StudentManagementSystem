@@ -20,7 +20,11 @@ public static class MauiProgram
         builder.Services.AddSingleton<StudentRepository>();
         builder.Services.AddSingleton<CourseRepository>();
 
+		#if ANDROID23_0_OR_GREATER
 		builder.Services.AddMauiBlazorWebView();
+		#else
+		builder.Services.AddMauiBlazorWebView().AddAdditionalAssemblies(typeof(Microsoft.AspNetCore.Components.WebView.Maui.BlazorWebView).Assembly);
+		#endif
 
 #if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();

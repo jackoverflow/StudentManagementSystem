@@ -29,7 +29,8 @@ public static class DbInitializer
 
         // 2. Seed Courses if empty
         command.CommandText = "SELECT COUNT(*) FROM Courses";
-        if ((long)command.ExecuteScalar() == 0)
+        var courseCount = command.ExecuteScalar();
+        if (courseCount == null || (long)courseCount == 0)
         {
             string[] courses = { "Computer Science", "Information Technology", "Software Engineering", "Data Science" };
             foreach (var courseName in courses)
