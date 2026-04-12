@@ -1,12 +1,8 @@
-# DELETE Functionality Implementation TODO
+# Task Progress: Fix StudentCourseRelation Build Error (BlazorWebView .NET 9)
 
 ## Steps:
-- [x] Step 1: Add `DeleteAsync(string id)` method to Services/StudentRepository.cs
-- [x] Step 2: Update Components/Pages/Students.razor 
-  - Refactor OnInitializedAsync to LoadStudents()
-  - Add DeleteStudent(string id) async method with JS confirm and refresh
-  - Add Actions column to table thead
-  - Add delete button to each row tbody
-  - Update loading states
-- [x] Step 3: Test functionality (run app, delete student, verify persistence)
-- [x] Step 4: attempt_completion
+- [x] Diagnose: Confirmed CS1061/CA1416 due to deprecated AddAdditionalAssemblies (not MudBlazor leak)
+- [x] Edit MauiProgram.cs: Simplify BlazorWebView registration + suppress CA1416
+- [x] Test: dotnet restore && dotnet build (all TFs succeed)
+- [x] Commit changes
+- [ ] Verify mudblazor isolation

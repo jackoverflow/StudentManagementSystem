@@ -20,16 +20,16 @@ public static class MauiProgram
         builder.Services.AddSingleton<StudentRepository>();
         builder.Services.AddSingleton<CourseRepository>();
 
-		#if ANDROID23_0_OR_GREATER
-		builder.Services.AddMauiBlazorWebView();
-		#else
-		builder.Services.AddMauiBlazorWebView().AddAdditionalAssemblies(typeof(Microsoft.AspNetCore.Components.WebView.Maui.BlazorWebView).Assembly);
-		#endif
+builder.Services.AddMauiBlazorWebView();
+
+#pragma warning disable CA1416 // Suppress Android platform warning (safe for app)
 
 #if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
+
+#pragma warning restore CA1416
 
 		return builder.Build();
 	}
