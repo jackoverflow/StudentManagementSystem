@@ -60,9 +60,11 @@
             var result = await StudentRepo.GetAllAsync();
             students = result.ToList();
         }
-        finally { }
-        isLoading = false;
-        StateHasChanged();
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
     }
 
     private async Task DeleteStudent(string id)
