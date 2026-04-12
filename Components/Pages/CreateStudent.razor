@@ -3,38 +3,33 @@
 @using StudentSystemApp.Services
 @inject StudentRepository StudentRepo
 @inject NavigationManager Navigation
+@inject ISnackbar Snackbar
 
 <PageTitle>Create Student</PageTitle>
 
-<div class="container mt-4">
-    <h2>Add New Student</h2>
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudPaper Elevation="4" Class="pa-6">
+        <MudText Typo="Typo.h5" GutterBottom="true">Add New Student</MudText>
 
-    <EditForm Model="student" OnValidSubmit="HandleValidSubmit" class="card p-4">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+        <EditForm Model="student" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
 
-        <div class="mb-3">
-            <label>Student Number</label>
-            <InputText @bind-Value="student.StudentNumber" class="form-control" placeholder="e.g. S003" />
-            <ValidationMessage For="@(() => student.StudentNumber)" />
-        </div>
+            <MudTextField Label="Student Number" @bind-Value="student.StudentNumber" 
+                          For="@(() => student.StudentNumber)" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mt-4" />
 
-        <div class="mb-3">
-            <label>Full Name</label>
-            <InputText @bind-Value="student.FullName" class="form-control" placeholder="John Doe" />
-            <ValidationMessage For="@(() => student.FullName)" />
-        </div>
+            <MudTextField Label="Full Name" @bind-Value="student.FullName" 
+                          For="@(() => student.FullName)" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mt-4" />
 
-        <div class="mb-3">
-            <label>Course</label>
-            <InputText @bind-Value="student.Course" class="form-control" placeholder="Computer Science" />
-            <ValidationMessage For="@(() => student.Course)" />
-        </div>
+            <MudTextField Label="Course" @bind-Value="student.Course" 
+                          For="@(() => student.Course)" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mt-4" />
 
-        <button type="submit" class="btn btn-success me-2 create-btn" disabled="@isLoading">Create Student</button>
-        <button type="button" class="btn btn-secondary create-btn" @onclick="Cancel">Cancel</button>
-    </EditForm>
-</div>
+            <MudStack Row="true" Justify="Justify.FlexEnd" Class="mt-6">
+                <MudButton ButtonType="ButtonType.Button" Variant="Variant.Text" OnClick="Cancel">Cancel</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Loading="@isLoading">Create Student</MudButton>
+            </MudStack>
+        </EditForm>
+    </MudPaper>
+</MudContainer>
 
 @code {
     private Student student = new() { Id = Guid.NewGuid().ToString() };
@@ -46,7 +41,12 @@
         try
         {
             await StudentRepo.CreateAsync(student);
+            Snackbar.Add("Student created successfully!", Severity.Success);
             Navigation.NavigateTo("/students");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
         }
         finally
         {
