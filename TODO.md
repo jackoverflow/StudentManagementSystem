@@ -5,4 +5,4 @@
 - [x] Edit MauiProgram.cs: Simplify BlazorWebView registration + suppress CA1416
 - [x] Test: dotnet restore && dotnet build (all TFs succeed)
 - [x] Commit changes
-- [ ] Verify mudblazor isolation
+- [x] Verify mudblazor isolation
